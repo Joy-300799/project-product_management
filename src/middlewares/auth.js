@@ -6,20 +6,19 @@ const userAuth = async(req, res, next) => {
         if (!token) {
             return res.status(403).send({ status: false, message: `Missing authentication token in request` })
         }
-        let T = token.split(' ')
-        console.log(T)
-        let timeOut = jwt.decode(T[1], 'group3-Project5-Products_management')
-        if (!timeOut) {
+        let splitToken = token.split(' ')
+
+        let decodeToken = jwt.decode(splitToken[1], 'group3-Project5-Products_management')
+        if (!decodeToken) {
             return res.status(403).send({ status: false, message: `Invalid authentication token in request ` })
         }
-        if (Date.now() > (timeOut.exp) * 1000) {
+        if (Date.now() > (decodeToken.exp) * 1000) {
             return res.status(404).send({ status: false, message: `Session Expired, please login again` })
         }
-        req.userId = timeOut.userId
+        req.userId = decodeToken.userId
         next()
-    } catch (error) {
-        console.error(`Error! ${error.message}`)
-        res.status(500).send({ status: false, message: error.message })
+    } catch (err) {
+        res.status(500).send({ status: false, message: err.message })
     }
 }
 module.exports = {
