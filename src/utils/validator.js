@@ -27,7 +27,7 @@ const validAddress = function(address) {
     if (Object.keys(address).length === 0) return false
     return true;
 }
-const validRating = function isInteger(value) {
+const validInstallment = function isInteger(value) {
     return value % 1 == 0;
 }
 
@@ -49,7 +49,7 @@ module.exports = {
     isValidObjectId,
     validString,
     validAddress,
-    validRating,
+    validInstallment,
     validatingInvalidObjectId,
     verifyReviewerName
 

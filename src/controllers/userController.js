@@ -102,7 +102,7 @@ const userCreation = async(req, res) => {
         } else {
             return res.status(400).send({ status: false, message: "Invalid request parameters. Shipping address's pincode cannot be empty" })
         }
-        // Billing Adress validation
+        // Billing Address validation
         if (address.billing.street) {
             if (!validator.isValidRequestBody(address.billing.street)) {
                 return res.status(400).send({
@@ -172,7 +172,7 @@ const userLogin = async function(req, res) {
         if (!validator.isValidRequestBody(requestBody)) {
             return res.status(400).send({ status: false, message: 'Invalid request parameters. Please provide login details' })
         }
-        if (!validator.isValid(requestBody.email.trim())) {
+        if (!validator.isValid(requestBody.email)) {
             return res.status(400).send({ status: false, message: 'Email Id is required' })
         }
 
@@ -183,11 +183,11 @@ const userLogin = async function(req, res) {
 
         const user = await userModel.findOne({ email });
         if (!user) {
-            return res.status(401).send({ status: false, message: `Invalid login credentials` });
+            return res.status(401).send({ status: false, message: `Login failed! email id is incorrect.` });
         }
         let hashedPassword = user.password
         const encryptedPassword = await bcrypt.compare(password, hashedPassword)
-        if (!encryptedPassword) return res.status(401).send({ status: false, message: `Invalid login credentials` });
+        if (!encryptedPassword) return res.status(401).send({ status: false, message: `Login failed! password is incorrect.` });
 
         const userId = user._id
         const token = await jwt.sign({

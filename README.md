@@ -180,7 +180,7 @@
 Note: [Bcrypt](https://www.npmjs.com/package/bcrypt)
 Send [form-data](https://developer.mozilla.org/en-US/docs/Web/API/FormData)
 
-## FEATTURE II - Product
+## FEATURE II - Product
 ### Models
 - Product Model
 ```yaml
