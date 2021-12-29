@@ -8,11 +8,11 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(multer().any()) // HERE
+app.use(multer().any())
 
 app.use('/', route);
 
-mongoose.connect("mongodb+srv://users-open-to-all:hiPassword123@cluster0.uh35t.mongodb.net/Project5-Group3?retryWrites=true&w=majority", { useNewUrlParser: true })
+mongoose.connect("mongodb+srv://users-open-to-all:hiPassword123@cluster0.uh35t.mongodb.net/Jai-Hind?retryWrites=true&w=majority", { useNewUrlParser: true })
     .then(() => console.log('DB connected'))
     .catch(err => console.log(err))
 

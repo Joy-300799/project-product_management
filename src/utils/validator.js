@@ -28,7 +28,8 @@ const validAddress = function(address) {
     return true;
 }
 const validInstallment = function isInteger(value) {
-    return value % 1 == 0;
+    if (value < 0) return false
+    if (value % 1 == 0) return true;
 }
 
 const validatingInvalidObjectId = function(objectId) {
@@ -41,6 +42,15 @@ const verifyReviewerName = function(value) {
     return true
 }
 
+const validQuantity = function isInteger(value) {
+    if (value < 1) return false
+    if (isNaN(Number(value))) return false
+    if (value % 1 == 0) return true
+}
+
+const isValidStatus = function(status) {
+    return ['pending', 'completed', 'cancelled'].indexOf(status) !== -1
+}
 
 module.exports = {
     isValid,
@@ -51,6 +61,7 @@ module.exports = {
     validAddress,
     validInstallment,
     validatingInvalidObjectId,
-    verifyReviewerName
-
+    verifyReviewerName,
+    validQuantity,
+    isValidStatus
 }

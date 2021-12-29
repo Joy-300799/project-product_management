@@ -253,7 +253,7 @@ const updateProduct = async function(req, res) {
 
         if (validator.isValid(title)) {
 
-            const isTitleAlreadyUsed = await productModel.findOne({ title, _id: { $ne: productId } });
+            const isTitleAlreadyUsed = await productModel.findOne({ title: title });
 
             if (isTitleAlreadyUsed) {
                 return res.status(400).send({ status: false, message: `${title} title is already used` })
