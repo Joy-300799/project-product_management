@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const saltRounds = 10
 
-
+//creating user by validating every details.
 const userCreation = async(req, res) => {
     try {
         let files = req.files;
@@ -20,6 +20,7 @@ const userCreation = async(req, res) => {
             address
         } = requestBody
 
+        //validation starts
         if (!validator.isValidRequestBody(requestBody)) {
             return res.status(400).send({ status: false, message: "please provide valid request body" })
         }
@@ -32,6 +33,8 @@ const userCreation = async(req, res) => {
         if (!validator.isValid(email)) {
             return res.status(400).send({ status: false, message: "email is required" })
         }
+
+        //searching email in DB to maintain its uniqueness
         const isEmailAleadyUsed = await userModel.findOne({ email })
         if (isEmailAleadyUsed) {
             return res.status(400).send({
@@ -50,6 +53,8 @@ const userCreation = async(req, res) => {
         if (!validator.isValid(phone)) {
             return res.status(400).send({ status: false, message: "phone number is required" })
         }
+
+        //searching phone in DB to maintain its uniqueness
         const isPhoneAleadyUsed = await userModel.findOne({ phone })
         if (isPhoneAleadyUsed) {
             return res.status(400).send({
@@ -141,8 +146,12 @@ const userCreation = async(req, res) => {
         } else {
             return res.status(400).send({ status: false, message: "Billing address cannot be empty." })
         }
-        profileImage = await config.uploadFile(files[0]);
-        const encryptedPassword = await bcrypt.hash(password, saltRounds)
+        //validation ends
+
+        profileImage = await config.uploadFile(files[0]); //uploading image to AWS
+        const encryptedPassword = await bcrypt.hash(password, saltRounds) //encrypting password by using bcrypt.
+
+        //object destructuring for response body.
         userData = {
             fname,
             lname,
@@ -152,6 +161,7 @@ const userCreation = async(req, res) => {
             password: encryptedPassword,
             address
         }
+
         const saveUserData = await userModel.create(userData);
         return res
             .status(201)
@@ -168,7 +178,7 @@ const userCreation = async(req, res) => {
     }
 }
 
-
+//user login by validating the email and password.
 const userLogin = async function(req, res) {
     try {
         const requestBody = req.body;
@@ -189,14 +199,19 @@ const userLogin = async function(req, res) {
         }
         // Validation ends
 
+        //finding user's details in DB to verify the credentials.
         const user = await userModel.findOne({ email });
+
         if (!user) {
             return res.status(401).send({ status: false, message: `Login failed! email id is incorrect.` });
         }
+
         let hashedPassword = user.password
-        const encryptedPassword = await bcrypt.compare(password, hashedPassword)
+        const encryptedPassword = await bcrypt.compare(password, hashedPassword) //converting normal password to hashed value to match it with DB's entry by using compare function.
+
         if (!encryptedPassword) return res.status(401).send({ status: false, message: `Login failed! password is incorrect.` });
 
+        //Creating JWT token through userId. 
         const userId = user._id
         const token = await jwt.sign({
             userId: userId,
@@ -217,6 +232,7 @@ const userLogin = async function(req, res) {
     }
 }
 
+//fetching user's profile by Id.
 const getProfile = async(req, res) => {
     try {
         const userId = req.params.userId
@@ -235,12 +251,11 @@ const getProfile = async(req, res) => {
                 message: `User doesn't exists by ${userId}`
             })
         }
-        //Checking the authorization of the user -> Whether user's Id matches with the book creater's Id or not.
-        if (userIdFromToken != findUserProfile._id) {
-            return res.status(403).send({
-                status: false,
-                message: "Unauthorized access."
-            })
+
+        //Authentication & authorization
+        if (findUserProfile._id.toString() != userIdFromToken) {
+            res.status(401).send({ status: false, message: `Unauthorized access! User's info doesn't match` });
+            return
         }
 
         return res.status(200).send({ status: true, message: "Profile found successfully.", data: findUserProfile })
@@ -252,6 +267,7 @@ const getProfile = async(req, res) => {
     }
 }
 
+//Update profile details by validating user details.
 const updateProfile = async(req, res) => {
     try {
         let files = req.files
@@ -259,13 +275,19 @@ const updateProfile = async(req, res) => {
         let userId = req.params.userId
         let userIdFromToken = req.userId
 
+        //Validation starts.
         if (!validator.isValidObjectId(userId)) {
             res.status(400).send({ status: false, message: `${userId} is not a valid user id` })
             return
         }
-        if (!validator.isValidObjectId(userIdFromToken)) {
-            return res.status(400).send({ status: false, message: `Unauthorized access! User's info doesn't match ` })
+
+        if (!validator.isValidRequestBody(requestBody)) {
+            return res.status(400).send({
+                status: false,
+                message: "Invalid request parameters. Please provide user's details to update."
+            })
         }
+
         const findUserProfile = await userModel.findOne({ _id: userId })
         if (!findUserProfile) {
             return res.status(400).send({
@@ -273,10 +295,13 @@ const updateProfile = async(req, res) => {
                 message: `User doesn't exists by ${userId}`
             })
         }
+
+        //Authentication & authorization
         if (findUserProfile._id.toString() != userIdFromToken) {
             res.status(401).send({ status: false, message: `Unauthorized access! User's info doesn't match` });
             return
         }
+
         // Extract params
         let { fname, lname, email, phone, password, address, profileImage } = requestBody;
 
@@ -297,6 +322,8 @@ const updateProfile = async(req, res) => {
                 return res.status(400).send({ status: false, message: "Invalid request parameter, please provide lname" })
             }
         }
+
+        //email validation
         if (!validator.validString(email)) {
             return res.status(400).send({ status: false, message: 'email is Required' })
         }
@@ -312,6 +339,8 @@ const updateProfile = async(req, res) => {
                 return res.status(400).send({ status: false, message: `Unable to update email. ${email} is already registered.` });
             }
         }
+
+        //phone validation
         if (!validator.validString(phone)) {
             return res.status(400).send({ status: false, message: 'phone number is Required' })
         }
@@ -327,6 +356,8 @@ const updateProfile = async(req, res) => {
                 return res.status(400).send({ status: false, message: `Unable to update phone. ${phone} is already registered.` });
             }
         }
+
+        //pasword validation and setting range of password.
         if (!validator.validString(password)) {
             return res.status(400).send({ status: false, message: 'password is Required' })
         }
@@ -340,8 +371,10 @@ const updateProfile = async(req, res) => {
             }
             var encryptedPassword = await bcrypt.hash(tempPassword, saltRounds)
         }
+
         //Address validation ->
         if (address) {
+
             //converting shipping address to string them parsing it.
             let shippingAddressToString = JSON.stringify(address)
             let parsedShippingAddress = JSON.parse(shippingAddressToString)
@@ -363,6 +396,8 @@ const updateProfile = async(req, res) => {
                             return res.status(400).send({ status: false, message: " Invalid request parameters. Please provide shipping address's pincode" });
                         }
                     }
+
+                    //using var to use these variables outside this If block.
                     var shippingStreet = address.shipping.street
                     var shippingCity = address.shipping.city
                     var shippingPincode = address.shipping.pincode
@@ -372,6 +407,7 @@ const updateProfile = async(req, res) => {
             }
         }
         if (address) {
+
             //converting billing address to string them parsing it.
             let billingAddressToString = JSON.stringify(address)
             let parsedBillingAddress = JSON.parse(billingAddressToString)
@@ -393,6 +429,8 @@ const updateProfile = async(req, res) => {
                             return res.status(400).send({ status: false, message: " Invalid request parameters. Please provide billing address's pincode" });
                         }
                     }
+
+                    //using var to use these variables outside this If block.
                     var billingStreet = address.billing.street
                     var billingCity = address.billing.city
                     var billingPincode = address.billing.pincode
@@ -401,6 +439,8 @@ const updateProfile = async(req, res) => {
                 return res.status(400).send({ status: false, message: " Invalid request parameters. Billing address cannot be empty" });
             }
         }
+
+        //validating user's profile image.
         if (files) {
             if (validator.isValidRequestBody(files)) {
                 if (!(files && files.length > 0)) {
@@ -411,6 +451,7 @@ const updateProfile = async(req, res) => {
         }
         //Validation ends
 
+        //object destructuring for response body.
         let changeProfileDetails = await userModel.findOneAndUpdate({ _id: userId }, {
             $set: {
                 fname: fname,

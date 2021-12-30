@@ -20,13 +20,13 @@ router.put('/products/:productId', productController.updateProduct)
 router.delete('/products/:productId', productController.deleteProduct)
 
 //Cart's APIs -> Authentication required.
-router.post('/users/:userId/cart', cartController.cartCreation)
-router.put('/users/:userId/cart', cartController.updateCart)
-router.get('/users/:userId/cart', cartController.getCart)
-router.delete('/users/:userId/cart', cartController.deleteCart)
+router.post('/users/:userId/cart', middleware.userAuth, cartController.cartCreation)
+router.put('/users/:userId/cart', middleware.userAuth, cartController.updateCart)
+router.get('/users/:userId/cart', middleware.userAuth, cartController.getCart)
+router.delete('/users/:userId/cart', middleware.userAuth, cartController.deleteCart)
 
 //Order's APIs -> Authentication required.
-router.post('/users/:userId/orders', orderController.orderCreation)
-router.put('/users/:userId/orders', orderController.updateOrder)
+router.post('/users/:userId/orders', middleware.userAuth, orderController.orderCreation)
+router.put('/users/:userId/orders', middleware.userAuth, orderController.updateOrder)
 
 module.exports = router;

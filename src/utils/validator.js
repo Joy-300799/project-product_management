@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
-const ObjectId = mongoose.Types.ObjectId
-    // Validation checking function
 
+// Validation checking function
 const isValid = function(value) {
     if (typeof value === 'undefined' || value === null) return false //it checks whether the value is null or undefined.
     if (typeof value === 'string' && value.trim().length === 0) return false //it checks whether the string contain only space or not 
@@ -18,15 +17,18 @@ const isValidTitle = function(title) {
     return ['Mr', 'Mrs', 'Miss'].indexOf(title) !== -1
 }
 
+//only check empty string value.
 const validString = function(value) {
-    if (typeof value === 'string' && value.trim().length === 0) return false //it checks whether the string contain only space or not 
-    return true;
-}
-const validAddress = function(address) {
-    if (typeof address === 'undefined' || address === null) return false //it checks whether the value is null or undefined.
-    if (Object.keys(address).length === 0) return false
-    return true;
-}
+        if (typeof value === 'string' && value.trim().length === 0) return false //it checks whether the string contain only space or not 
+        return true;
+    }
+    // const validAddress = function(address) {
+    //     if (typeof address === 'undefined' || address === null) return false //it checks whether the value is null or undefined.
+    //     if (Object.keys(address).length === 0) return false
+    //     return true;
+    // }
+
+//for product
 const validInstallment = function isInteger(value) {
     if (value < 0) return false
     if (value % 1 == 0) return true;
@@ -37,17 +39,19 @@ const validatingInvalidObjectId = function(objectId) {
     return false
 }
 
-const verifyReviewerName = function(value) {
-    if (typeof value === 'number') return false
-    return true
-}
+// const verifyReviewerName = function(value) {
+//     if (typeof value === 'number') return false
+//     return true
+// }
 
+//for product
 const validQuantity = function isInteger(value) {
     if (value < 1) return false
     if (isNaN(Number(value))) return false
     if (value % 1 == 0) return true
 }
 
+//for order
 const isValidStatus = function(status) {
     return ['pending', 'completed', 'cancelled'].indexOf(status) !== -1
 }
@@ -58,10 +62,10 @@ module.exports = {
     isValidTitle,
     isValidObjectId,
     validString,
-    validAddress,
+    //validAddress,
     validInstallment,
     validatingInvalidObjectId,
-    verifyReviewerName,
+    //verifyReviewerName,
     validQuantity,
     isValidStatus
 }
