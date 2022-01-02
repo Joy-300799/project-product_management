@@ -118,17 +118,17 @@ const productCreation = async function(req, res) {
 
             for (let i = 0; i < sizesArray.length; i++) {
                 if (!(["S", "XS", "M", "X", "L", "XXL", "XL"].includes(sizesArray[i]))) {
-                    return res.status(400).send({ status: false, message: `availableSizes should be among ["S", "XS", "M", "X", "L", "XXL", "XL"]` })
+                    return res.status(400).send({ status: false, message: "AvailableSizes should be among ['S','XS','M','X','L','XXL','XL']" })
                 }
             }
 
             //using array.isArray function to check the value is array or not.
             if (Array.isArray(sizesArray)) {
-                newProductData['availableSizes'] = array
+                newProductData['availableSizes'] = sizesArray
             }
         }
         const saveProductDetails = await productModel.create(newProductData)
-        return res.status(201).send({ status: true, message: "Successfully saved product details", data: saveProductDetails })
+        return res.status(201).send({ status: true, message: "Product added successfully.", data: saveProductDetails })
 
     } catch (err) {
         return res.status(500).send({
@@ -197,12 +197,12 @@ const getAllProducts = async function(req, res) {
                 }
 
                 const products = await productModel.find(filterQuery).sort({ price: priceSort })
-                    // console.log(products)
+                console.log(products)
                 if (Array.isArray(products) && products.length === 0) {
-                    return res.status(404).send({ statuproductss: false, message: 'No Product found' })
+                    return res.status(404).send({ productStatus: false, message: 'No Product found' })
                 }
 
-                return res.status(200).send({ status: true, message: 'Product list', data: products })
+                return res.status(200).send({ status: true, message: 'Product list', data2: products })
             }
         }
 
@@ -210,7 +210,7 @@ const getAllProducts = async function(req, res) {
 
         //verifying is it an array and having some data in that array.
         if (Array.isArray(products) && products.length === 0) {
-            return res.status(404).send({ statuproductss: false, message: 'No Product found' })
+            return res.status(404).send({ productStatus: false, message: 'No Product found' })
         }
 
         return res.status(200).send({ status: true, message: 'Product list', data: products })
@@ -348,7 +348,7 @@ const updateProduct = async function(req, res) {
 
             for (let i = 0; i < sizesArray.length; i++) {
                 if (!(["S", "XS", "M", "X", "L", "XXL", "XL"].includes(sizesArray[i]))) {
-                    return res.status(400).send({ status: false, message: `availableSizes should be among ["S", "XS", "M", "X", "L", "XXL", "XL"]` })
+                    return res.status(400).send({ status: false, message: "AvailableSizes should be among ['S','XS','M','X','L','XXL','XL']" })
                 }
             }
             if (!updatedProductDetails.hasOwnProperty(updatedProductDetails, '$addToSet'))
@@ -369,7 +369,7 @@ const updateProduct = async function(req, res) {
 
         const updatedProduct = await productModel.findOneAndUpdate({ _id: productId }, updatedProductDetails, { new: true })
 
-        return res.status(200).send({ status: true, message: 'Successfully updated product details.', data: updatedProduct });
+        return res.status(200).send({ status: true, message: 'Product details updated successfully.', data: updatedProduct });
     } catch (err) {
         return res.status(500).send({
             status: false,

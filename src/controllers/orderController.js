@@ -188,7 +188,7 @@ const updateOrder = async(req, res) => {
             return res
                 .status(400)
                 .send({
-                    status: true,
+                    status: false,
                     message: "Mandatory paramaters not provided. Please enter current status of the order."
                 });
         }
@@ -196,7 +196,7 @@ const updateOrder = async(req, res) => {
             return res
                 .status(400)
                 .send({
-                    status: true,
+                    status: false,
                     message: "Invalid status in request body. Choose either 'pending','completed', or 'cancelled'."
                 });
         }
@@ -225,13 +225,13 @@ const updateOrder = async(req, res) => {
         //for cancellable : false
         if (isOrderBelongsToUser['status'] == "completed") {
             if (status) {
-                return res.status(400).send({ status: true, message: `Cannot update or change the status, because it's already in completed status.` })
+                return res.status(400).send({ status: false, message: `Cannot update or change the status, because it's already in completed status.` })
             }
         }
 
         if (isOrderBelongsToUser['status'] == "cancelled") {
             if (status) {
-                return res.status(400).send({ status: true, message: `Cannot update or change the status, because it's already in cancelled status.` })
+                return res.status(400).send({ status: false, message: `Cannot update or change the status, because it's already in cancelled status.` })
             }
         }
 

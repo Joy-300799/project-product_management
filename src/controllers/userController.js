@@ -357,7 +357,7 @@ const updateProfile = async(req, res) => {
             }
         }
 
-        //pasword validation and setting range of password.
+        //password validation and setting range of password.
         if (!validator.validString(password)) {
             return res.status(400).send({ status: false, message: 'password is Required' })
         }
