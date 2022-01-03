@@ -179,7 +179,7 @@ const updateCart = async function(req, res) {
 
                 if (itemsArr[i].quantity < 1) {
                     await cartModel.findOneAndUpdate({ _id: cartId }, { $pull: { items: { productId: productId } } }, { new: true })
-                    let quantity = cart.totalItems - 1
+                    let quantity = findCart.totalItems - 1
 
                     let data = await cartModel.findOneAndUpdate({ _id: cartId }, { $set: { totalPrice: totalAmount, totalItems: quantity } }, { new: true }) //update the cart with total items and totalprice
 
