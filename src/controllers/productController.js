@@ -197,7 +197,7 @@ const getAllProducts = async function(req, res) {
                 }
 
                 const products = await productModel.find(filterQuery).sort({ price: priceSort })
-                console.log(products)
+                    // console.log(products)
                 if (Array.isArray(products) && products.length === 0) {
                     return res.status(404).send({ productStatus: false, message: 'No Product found' })
                 }
@@ -228,7 +228,7 @@ const getProductsById = async function(req, res) {
         if (!validator.isValidObjectId(productId)) {
             return res.status(400).send({ status: false, message: `${productId} is not a valid product id` })
         }
-        //validatio ends.
+        //validation ends.
 
         const product = await productModel.findOne({ _id: productId, isDeleted: false });
 
