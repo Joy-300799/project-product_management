@@ -155,7 +155,7 @@ const updateCart = async function(req, res) {
             return res.status(400).send({ status: false, message: 'removeProduct should be 0 (product is to be removed) or 1(quantity has to be decremented by 1) ' })
         }
 
-        let findQuantity = findCart.items.find(x => x.productId.toString() === productId)
+        let findQuantity = findCart.items.find(x => x.productId.toString() === productId) //returns object
             //console.log(findQuantity)
 
         if (removeProduct === 0) {
@@ -283,11 +283,10 @@ const deleteCart = async function(req, res) {
                 totalPrice: 0,
                 totalItems: 0
             }
-        }, { new: true })
+        })
         return res.status(204).send({
             status: true,
-            message: "Cart deleted successfully",
-            data: deleteCart
+            message: "Cart deleted successfully"
         })
 
     } catch (err) {

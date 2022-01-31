@@ -124,8 +124,9 @@ const productCreation = async function(req, res) {
 
             //using array.isArray function to check the value is array or not.
             if (Array.isArray(sizesArray)) {
-                newProductData['availableSizes'] = sizesArray
+                newProductData['availableSizes'] = [...new Set(sizesArray)]
             }
+    
         }
         const saveProductDetails = await productModel.create(newProductData)
         return res.status(201).send({ status: true, message: "Product added successfully.", data: saveProductDetails })
@@ -168,7 +169,7 @@ const getAllProducts = async function(req, res) {
                 if (priceGreaterThan <= 0) {
                     return res.status(400).send({ status: false, message: `priceGreaterThan should be a valid number` })
                 }
-                if (!Object.prototype.hasOwnProperty.call(filterQuery, 'price'))
+                if (!filterQuery.hasOwnProperty('price'))
                     filterQuery['price'] = {}
                 filterQuery['price']['$gte'] = Number(priceGreaterThan)
                     //console.log(typeof Number(priceGreaterThan))
@@ -183,7 +184,7 @@ const getAllProducts = async function(req, res) {
                 if (priceLessThan <= 0) {
                     return res.status(400).send({ status: false, message: `priceLessThan should be a valid number` })
                 }
-                if (!Object.prototype.hasOwnProperty.call(filterQuery, 'price'))
+                if (!filterQuery.hasOwnProperty('price'))
                     filterQuery['price'] = {}
                 filterQuery['price']['$lte'] = Number(priceLessThan)
                     //console.log(typeof Number(priceLessThan))
@@ -215,7 +216,7 @@ const getAllProducts = async function(req, res) {
 
         return res.status(200).send({ status: true, message: 'Product list', data: products })
     } catch (error) {
-        return res.status(500).send({ success: false, error: error.message });
+        return res.status(500).send({ status: false, error: error.message });
     }
 }
 
@@ -353,7 +354,7 @@ const updateProduct = async function(req, res) {
             }
             if (!updatedProductDetails.hasOwnProperty(updatedProductDetails, '$addToSet'))
                 updatedProductDetails['$addToSet'] = {}
-            updatedProductDetails['$addToSet']['availableSizes'] = { $each: sizesArray }
+            updatedProductDetails['$addToSet']['availableSizes'] = sizesArray
         }
 
         //verifying must be a valid no. & must be greater than 0.
@@ -401,7 +402,6 @@ const deleteProduct = async function(req, res) {
             return res.status(200).send({ status: true, message: `Product deleted successfully.` })
         }
         return res.status(400).send({ status: true, message: `Product has been already deleted.` })
-
 
     } catch (err) {
         return res.status(500).send({

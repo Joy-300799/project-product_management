@@ -3,7 +3,7 @@ const userModel = require("../models/userModel");
 const cartModel = require("../models/cartModel");
 const orderModel = require("../models/orderModel");
 
-//Craeting order
+//Creating order
 const orderCreation = async(req, res) => {
     try {
         const userId = req.params.userId;
