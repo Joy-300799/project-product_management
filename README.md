@@ -1,4 +1,3 @@
-# Radium
 ## Project - Products Management
 
 ### Key points
