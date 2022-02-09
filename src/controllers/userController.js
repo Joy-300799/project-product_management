@@ -4,6 +4,8 @@ const config = require('../utils/awsConfig')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const saltRounds = 10
+const secretKey = "Project5-Products_management-JoyBhattacharya"
+
 
 //creating user by validating every details.
 const userCreation = async(req, res) => {
@@ -217,7 +219,7 @@ const userLogin = async function(req, res) {
             userId: userId,
             iat: Math.floor(Date.now() / 1000), //time of issuing the token.
             exp: Math.floor(Date.now() / 1000) + 3600 * 24 * 7 //setting token expiry time limit.
-        }, 'group3-Project5-Products_management')
+        }, secretKey)
 
         return res.status(200).send({
             status: true,
